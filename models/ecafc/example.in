@@ -1,0 +1,32 @@
+MAGMA
+    T0      1320    # Initial standing melt temperature (ºC)
+    Tl      1320    # Pristine standing melt liquidus temperature (ºC)
+    cp      1484    # Specific heat capacity of magma (J K-1 kg-1)
+    dh      396000  # Enthalpy of crystallization (dh_cry) (J kg-1)
+    alpha   450     # Logistic parameter alpha
+    beta    -10.5   # Logisitc parameter beta
+    D0      1.5     # Bulk distribution coefficient between cumulate and melt
+    dH      0       # Enthalpy of cumulate/standing melt partition coefficient (J mol-1)
+    C0      700     # Concentration of trace element in standing melt (ppm)
+    e0      0.7035  # Isotopic ratio in standing melt
+    d0      1       # Oxygen isotopic composition of standing magma
+
+ASSIMILANT
+    T0      600     # Initial wall rock temperature (ºC)
+    Tl      1100    # Wall rock liquidus temperature (ºC)
+    cp      1388    # Specific heat capacity of magma (J K-1 kg-1)
+    dh      354000  # Enthalpy of crystallization (dh_cry) (J kg-1)
+    alpha   400     # Logistic parameter alpha
+    beta    -11     # Logisitc parameter beta
+    D0      1.5     # Bulk distribution coefficient between cumulate and melt
+    dH      0       # Enthalpy of cumulate/standing melt partition coefficient (J mol-1)
+    C0      350     # Concentration of trace element in standing melt (ppm)
+    e0      0.722   # Isotopic ratio in standing melt
+    d0      1       # Oxygen isotopic composition of standing magma
+
+OTHER
+    Ts      950     # Country rock solidus
+    dT      0.001   # Temperature step (K)
+    Mm0     1       # Mass of magma body
+    Teq     0.88    # Equilibration temperature
+    koxy    1
