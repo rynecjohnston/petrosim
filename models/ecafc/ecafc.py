@@ -180,7 +180,6 @@ class ECAFC:
         dT = self.params_init.dT
         Tnorm0 = self.params_init.Teq_norm - dT
         Tnorm1 = self.params_init.T1
-        print(Tnorm1, Tnorm0)
         max_iter = (Tnorm1 - Tnorm0) / dT
 
         if print_lines:

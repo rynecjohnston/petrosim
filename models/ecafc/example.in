@@ -28,5 +28,5 @@ OTHER
     Ts      950     # Country rock solidus
     dT      0.001   # Temperature step (K)
     Mm0     1       # Mass of magma body
-    Teq     0.88    # Equilibration temperature
+    Teq     0.827   # Equilibration temperature
     koxy    1

@@ -80,12 +80,13 @@ class InputFileReader:
         self.constants.Mm0 = self.params_init[OTHER.upper()]['Mm0']
         self.constants.koxy = self.params_init[OTHER.upper()]['koxy']
         self.constants.Teq_norm = self.params_init[OTHER.upper()]['Teq']
-        self.constants.Ta0_norm = self.constants.Ta0 / self.constants.Tlm
 
         for param in ['Tlm', 'Tla', 'Tm0', 'Ta0', 'Ts']:
             uncorrected_temp = getattr(self.constants, param)
             setattr(self.constants, param, uncorrected_temp + self.constants.K)
+
         self.constants.T1 = 1
+        self.constants.Ta0_norm = self.constants.Ta0 / self.constants.Tlm
 
 
 class Initialization:
