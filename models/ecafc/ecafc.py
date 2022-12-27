@@ -7,7 +7,6 @@ Crystallization (EC-AFC) model based on work by Spera & Bohrson J. Petrol., 42,
 import numpy as np
 
 import equilibration as equil
-import settings
 
 
 def get_T_iter(Tm, dT, slope_iter):
@@ -40,7 +39,6 @@ class Parameter:
     """
     Base class for each parameter.
     """
-
     def __init__(self, value_old, decimals=3):
         """
         :param value_old: Initial value for this iteration
@@ -93,13 +91,46 @@ class Parameter:
         :type params_sim: dict[str: `Parameter`]
         """
 
-        self.dy_dx = self.slopeFunc(slope_iter, x, params_init, params_eq, params_sim)
+        self.dy_dx = self.slopeFunc(slope_iter, x, params_init, params_eq,
+                                    params_sim)
+
+    def calcSlopeTrace(self, slope_iter, x, params_init, params_eq, params_sim,
+                       trace, trace_iter):
+        """
+        Calculate the slope at point x using a particular function.
+
+        :param slope_iter: The slope iteration
+        :type slope_iter: int
+
+        :param x: The x value for where the new slope is to be calculated
+        :type x: float
+
+        :param params_init: The initial values to parameterize the EC-AFC model.
+        :type params_init: `settings.Initialization`
+
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
+        :type params_eq: `equilibration.EquilibrationParams`
+
+        :param params_sim: The parameters for the current simulation
+        :type params_sim: dict[str: `Parameter`]
+
+        :param trace: The parameters for the current trace element
+        :type trace: dict[str: `Parameter`]
+
+        :param trace: The iteration of the current trace element within the all
+        traces elements.
+        :type trace: int
+        """
+
+        self.dy_dx = self.slopeFuncTrace(slope_iter, x, params_init, params_eq,
+                                         params_sim, trace, trace_iter)
 
     def addSlope(self, differential):
         """
         Calculate the slope at point x using a particular function and append to
         the slopes list.
-        
+
         :param differential: The differential value to find the slope from
         :type differential: float
         """
@@ -136,11 +167,18 @@ class Parameter_Tm(Parameter):
     """
     The specific class to calculate the standing melt temperature.
     """
-
     def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
         super().__init__(value_old, decimals)
 
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
+    def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
         Calculate the slope at point x using a particular function.
 
@@ -153,7 +191,8 @@ class Parameter_Tm(Parameter):
         :param params_init: The initial values to parameterize the EC-AFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
         :type params_eq: `equilibration.EquilibrationParams`
 
         :param params_sim: The parameters for the current simulation
@@ -171,11 +210,18 @@ class Parameter_Ta(Parameter):
     """
     The specific class to calculate the wall rock temperature.
     """
-
     def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
         super().__init__(value_old, decimals)
 
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
+    def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
         Calculate the slope at point x using a particular function.
 
@@ -188,7 +234,8 @@ class Parameter_Ta(Parameter):
         :param params_init: The initial values to parameterize the EC-AFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
         :type params_eq: `equilibration.EquilibrationParams`
 
         :param params_sim: The parameters for the current simulation
@@ -210,11 +257,18 @@ class Parameter_Mm(Parameter):
     """
     The specific class to calculate the magma body mass.
     """
-
     def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
         super().__init__(value_old, decimals)
 
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
+    def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
         Calculate the slope at point x using a particular function.
 
@@ -227,7 +281,8 @@ class Parameter_Mm(Parameter):
         :param params_init: The initial values to parameterize the EC-AFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
         :type params_eq: `equilibration.EquilibrationParams`
 
         :param params_sim: The parameters for the current simulation
@@ -239,96 +294,10 @@ class Parameter_Mm(Parameter):
 
         kwargs = {
             'Tm': x,
-            'Ta': params['Ta'].thisStepValue(slope_iter),
+            'Ta': params_sim['Ta'].thisStepValue(slope_iter),
             'Ma0': params_eq.Ma0
         }
         return equil.conserv_mass_dMm_dTm(**kwargs)
-
-
-class Parameter_Cm(Parameter):
-    """
-    The specific class to calculate the conc. of trace element in standing melt.
-    """
-
-    def __init__(self, value_old, decimals):
-        super().__init__(value_old, decimals)
-
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
-        """
-        Calculate the slope at point x using a particular function.
-
-        :param slope_iter: The slope iteration
-        :type slope_iter: int
-
-        :param x: The x value for where the new slope is to be calculated
-        :type x: float
-
-        :param params_init: The initial values to parameterize the EC-AFC model.
-        :type params_init: `settings.Initialization`
-
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
-        :type params_eq: `equilibration.EquilibrationParams`
-
-        :param params_sim: The parameters for the current simulation
-        :type params_sim: dict[str: `Parameter`]
-
-        :return: the conc. of trace element in standing melt
-        :rtype: float
-        """
-
-        kwargs = {
-            'Tm': x,
-            'Ta': params['Ta'].thisStepValue(slope_iter),
-            'Ma0': params_eq.Ma0,
-            'Mm': params['Mm'].thisStepValue(slope_iter),
-            'Cm': self.thisStepValue(slope_iter),
-            'dTa_dTm': params['Ta'].dy_dx
-        }
-        return equil.conc_trace_elem_dCm_dTm(**kwargs)
-
-
-class Parameter_em(Parameter):
-    """
-    The specific class to calculate the isotopic ratio of trace element in
-    standing melt.
-    """
-
-    def __init__(self, value_old, decimals):
-        super().__init__(value_old, decimals)
-
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
-        """
-        Calculate the slope at point x using a particular function.
-
-        :param slope_iter: The slope iteration
-        :type slope_iter: int
-
-        :param x: The x value for where the new slope is to be calculated
-        :type x: float
-
-        :param params_init: The initial values to parameterize the EC-AFC model.
-        :type params_init: `settings.Initialization`
-
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
-        :type params_eq: `equilibration.EquilibrationParams`
-
-        :param params_sim: The parameters for the current simulation
-        :type params_sim: dict[str: `Parameter`]
-
-        :return: the isotopic ratio of trace element in standing melt
-        :rtype: float
-        """
-
-        kwargs = {
-            'Tm': x,
-            'Ta': params['Ta'].thisStepValue(slope_iter),
-            'Ma0': params_eq.Ma0,
-            'Mm': params['Mm'].thisStepValue(slope_iter),
-            'Cm': params['Cm'].thisStepValue(slope_iter),
-            'dTa_dTm': params['Ta'].dy_dx,
-            'em': self.thisStepValue(slope_iter),
-        }
-        return equil.isotop_ratio_dem_dTm(**kwargs)
 
 
 class Parameter_dm(Parameter):
@@ -336,11 +305,18 @@ class Parameter_dm(Parameter):
     The specific class to calculate the oxygen isotopic composition of standing
     magma
     """
-
     def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
         super().__init__(value_old, decimals)
 
-    def slopeFunc(self, slope_iter, x, params_init, params_eq, params):
+    def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
         Calculate the slope at point x using a particular function.
 
@@ -353,7 +329,8 @@ class Parameter_dm(Parameter):
         :param params_init: The initial values to parameterize the EC-AFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
         :type params_eq: `equilibration.EquilibrationParams`
 
         :param params_sim: The parameters for the current simulation
@@ -365,13 +342,130 @@ class Parameter_dm(Parameter):
 
         kwargs = {
             'Tm': x,
-            'Ta': params['Ta'].thisStepValue(slope_iter),
+            'Ta': params_sim['Ta'].thisStepValue(slope_iter),
             'Ma0': params_eq.Ma0,
-            'Mm': params['Mm'].thisStepValue(slope_iter),
-            'dTa_dTm': params['Ta'].dy_dx,
+            'Mm': params_sim['Mm'].thisStepValue(slope_iter),
+            'dTa_dTm': params_sim['Ta'].dy_dx,
             'dm': self.thisStepValue(slope_iter),
         }
         return equil.oxygen_isotope_comp_ddm_dTm(**kwargs)
+
+
+class Parameter_Cm(Parameter):
+    """
+    The specific class to calculate the conc. of trace element in standing melt.
+    """
+    def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
+        super().__init__(value_old, decimals)
+
+    def slopeFuncTrace(self, slope_iter, x, params_init, params_eq, params_sim,
+                       param_trace, trace_iter):
+        """
+        Calculate the slope at point x using a particular function.
+
+        :param slope_iter: The slope iteration
+        :type slope_iter: int
+
+        :param x: The x value for where the new slope is to be calculated
+        :type x: float
+
+        :param params_init: The initial values to parameterize the EC-AFC model.
+        :type params_init: `settings.Initialization`
+
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
+        :type params_eq: `equilibration.EquilibrationParams`
+
+        :param params_sim: The parameters for the current simulation
+        :type params_sim: dict[str: `Parameter`]
+
+        :param param_trace: The parameters for the current trace element
+        :type param_trace: dict[str: `Parameter`]
+
+        :param trace: The iteration of the current trace element within the all
+        traces elements.
+        :type trace: int
+        """
+
+        kwargs = {
+            'Tm': x,
+            'Ta': params_sim['Ta'].thisStepValue(slope_iter),
+            'Ma0': params_eq.Ma0,
+            'Mm': params_sim['Mm'].thisStepValue(slope_iter),
+            'Cm': self.thisStepValue(slope_iter),
+            'Ca0': params_init.traces[trace_iter]['Ca0'],
+            'Cm0': params_init.traces[trace_iter]['Cm0'],
+            'dTa_dTm': params_sim['Ta'].dy_dx,
+        }
+        return equil.conc_trace_elem_dCm_dTm(**kwargs)
+
+
+class Parameter_em(Parameter):
+    """
+    The specific class to calculate the isotopic ratio of trace element in
+    standing melt.
+    """
+    def __init__(self, value_old, decimals):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
+        super().__init__(value_old, decimals)
+
+    def slopeFuncTrace(self, slope_iter, x, params_init, params_eq, params_sim,
+                       param_trace, trace_iter):
+        """
+        Calculate the slope at point x using a particular function.
+
+        :param slope_iter: The slope iteration
+        :type slope_iter: int
+
+        :param x: The x value for where the new slope is to be calculated
+        :type x: float
+
+        :param params_init: The initial values to parameterize the EC-AFC model.
+        :type params_init: `settings.Initialization`
+
+        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        model.
+        :type params_eq: `equilibration.EquilibrationParams`
+
+        :param params_sim: The parameters for the current simulation
+        :type params_sim: dict[str: `Parameter`]
+
+        :param param_trace: The parameters for the current trace element
+        :type param_trace: dict[str: `Parameter`]
+
+        :param trace: The iteration of the current trace element within the all
+        traces elements.
+        :type trace: int
+        """
+
+        kwargs = {
+            'Tm': x,
+            'Ta': params_sim['Ta'].thisStepValue(slope_iter),
+            'Ma0': params_eq.Ma0,
+            'Mm': params_sim['Mm'].thisStepValue(slope_iter),
+            'Cm': param_trace['Cm'].thisStepValue(slope_iter),
+            'Ca0': params_init.traces[trace_iter]['Ca0'],
+            'Cm0': params_init.traces[trace_iter]['Cm0'],
+            'dTa_dTm': params_sim['Ta'].dy_dx,
+            'ea0': params_init.traces[trace_iter]['ea0'],
+            'em': self.thisStepValue(slope_iter),
+        }
+        return equil.isotop_ratio_dem_dTm(**kwargs)
 
 
 class ECAFC:
@@ -380,7 +474,6 @@ class ECAFC:
     quantities in `self.params` are updated each iteration of the simulation and
     stored by corresponding keys in `self.results`.
     """
-
     def __init__(self, params_init):
         """
         The EC-AFC simulation is initialized by passing the initialized
@@ -393,14 +486,21 @@ class ECAFC:
 
         self.params_init = params_init
         self.params_eq = equil.EquilibrationParams(self.params_init.Teq_norm)
-        self.params = {
-            'Tm': Parameter_Tm(1.0, decimals=4),
+        self.params_sim = {
+            'Tm': Parameter_Tm(params_init.Tm0_norm, decimals=4),
             'Ta': Parameter_Ta(params_init.Ta0_norm, decimals=4),
             'Mm': Parameter_Mm(params_init.Mm0, decimals=3),
-            'Cm': Parameter_Cm(params_init.Cm0, decimals=3),
-            'em': Parameter_em(params_init.em0, decimals=3),
-            'dm': Parameter_em(params_init.dm0, decimals=3),
+            'dm': Parameter_dm(params_init.dm0, decimals=3),
         }
+        self.params_traces = []
+        for trace in params_init.traces:
+            params_trace = {
+                'elem': trace['elem'],
+                'isoratio': trace['isoratio'],
+                'Cm': Parameter_Cm(trace['Cm0'], decimals=3),
+                'em': Parameter_em(trace['em0'], decimals=3),
+            }
+            self.params_traces.append(params_trace)
 
     def simulate(self, print_lines=3):
         """
@@ -408,7 +508,7 @@ class ECAFC:
         crystalization using 4th-order Runge-Kutta (RK4) for each normalized
         temperature step in the requested temperature range as the melting temp
         (Tnorm1) cools to the equilibration temperature (Tnorm0).
-        
+
         :param print_lines: Number of results lines to print (0 to not print) at
         the beginning and end of the simulation
         :type print_lines: int
@@ -416,29 +516,46 @@ class ECAFC:
 
         dT = self.params_init.dT
         Tnorm0 = self.params_init.Teq_norm - dT
-        Tnorm1 = self.params_init.T1
+        Tnorm1 = self.params_init.Tm0_norm
         max_iter = (Tnorm1 - Tnorm0) / dT
 
         if print_lines:
             self._printResults(0, max_iter)
         for i, T in enumerate(np.arange(Tnorm1, Tnorm0, -dT), start=1):
-            self.params['Tm'].old_value = T
+            self.params_sim['Tm'].value_old = T
 
             if print_lines:
                 self._printResults(i, max_iter, lines_shown=print_lines)
 
-            for param in self.params.values():
+            for param in self.params_sim.values():
                 param.clearSlopes()
+            for trace in self.params_traces:
+                for name in ['Cm', 'em']:
+                    param_trace = trace[name]
+                    param_trace.clearSlopes()
 
             for h in range(4):
-                T = get_T_iter(self.params['Tm'].old_value, dT, h)
-                for name, param in self.params.items():
-                    param.calcSlope(h, T, self.params_init, self.params_eq, self.params)
-                    param.addSlope(self.params_init.dT)
+                T = get_T_iter(self.params_sim['Tm'].value_old, dT, h)
+                for param in self.params_sim.values():
+                    param.calcSlope(h, T, self.params_init, self.params_eq,
+                                    self.params_sim)
+                    param.addSlope(dT)
+                for t, trace in enumerate(self.params_traces):
+                    for name in ['Cm', 'em']:
+                        param_trace = trace[name]
+                        param_trace.calcSlopeTrace(h, T, self.params_init,
+                                                   self.params_eq,
+                                                   self.params_sim, trace, t)
+                        param_trace.addSlope(dT)
 
-            for name, param in self.params.items():
+            for name, param in self.params_sim.items():
                 param.calcNewValue()
                 param.updateValue()
+            for trace in self.params_traces:
+                for name in ['Cm', 'em']:
+                    param_trace = trace[name]
+                    param_trace.calcNewValue()
+                    param_trace.updateValue()
 
     def _printResults(self, iter, max_iter, lines_shown=3):
         """
@@ -456,28 +573,45 @@ class ECAFC:
         """
 
         if iter == 0:
-            print(f'{"Tm,norm":>8s}', f'{"Tm":>8s}', f'{"Ta,norm":>8s}',
-                  f'{"Ta":>8s}', f'{"Mm":>8s}', f'{"Cm":>8s}',
-                  f'{"em":>8s}', f'{"dm":>8s}')
+            fields = [
+                f'{"Tm,norm":>8s}', f'{"Tm":>8s}', f'{"Ta,norm":>8s}',
+                f'{"Ta":>8s}', f'{"Mm":>8s}', f'{"dm":>8s}'
+            ]
+            for trace in self.params_traces:
+                for name in ['Cm', 'em']:
+                    fields.append(f'{name:>8s}')
+            print(' '.join(fields))
             return
 
-        T_m = equil.unnormalize_temp(self.params['Tm'].value_old)
-        T_a = equil.unnormalize_temp(self.params['Ta'].value_old)
+        T_m = equil.unnormalize_temp(self.params_sim['Tm'].value_old)
+        T_a = equil.unnormalize_temp(self.params_sim['Ta'].value_old)
 
         if lines_shown == -1:
-            print(self.params["Tm"].str, f'{T_m:8.2f}',
-                  self.params["Ta"].str, f'{T_a:8.2f}',
-                  self.params["Mm"].str, self.params["Cm"].str,
-                  self.params["em"].str, self.params["dm"].str)
+            values = [
+                self.params_sim["Tm"].str, f'{T_m:8.2f}',
+                self.params_sim["Ta"].str, f'{T_a:8.2f}',
+                self.params_sim["Mm"].str, self.params_sim["dm"].str
+            ]
+            for trace in self.params_traces:
+                for name in ['Cm', 'em']:
+                    param_trace = trace[name]
+                    values.extend([param_trace.str, param_trace.str])
+            print(' '.join(values))
         else:
             if lines_shown < iter <= max_iter - lines_shown + 1:
                 if iter == lines_shown + 1:
                     print(f'{"":.>3s}')
             else:
-                print(self.params["Tm"].str, f'{T_m:8.2f}',
-                      self.params["Ta"].str, f'{T_a:8.2f}',
-                      self.params["Mm"].str, self.params["Cm"].str,
-                      self.params["em"].str, self.params["dm"].str)
+                values = [
+                    self.params_sim["Tm"].str, f'{T_m:8.2f}',
+                    self.params_sim["Ta"].str, f'{T_a:8.2f}',
+                    self.params_sim["Mm"].str, self.params_sim["dm"].str
+                ]
+                for trace in self.params_traces:
+                    for name in ['Cm', 'em']:
+                        param_trace = trace[name]
+                        values.append(param_trace.str)
+                print(' '.join(values))
 
 
 """
@@ -486,8 +620,11 @@ Below is an example usage of the API.
 if __name__ == '__main__':
     import dataclasses
 
-    settings.init('example.in')
-    params_init = settings.Initialization(**dataclasses.asdict(settings.const))
+    import loader as ldr
+
+
+    ldr.init('example.in')
+    params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
 
     ecafc = ECAFC(params_init)
     ecafc.simulate(print_lines=4)
