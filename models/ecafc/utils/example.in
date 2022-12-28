@@ -1,3 +1,4 @@
+
 BULK:
     MAGMA:
         M0:     1       # Normalized mass of melt in magma body
@@ -26,7 +27,7 @@ BULK:
     OTHER:
         Ts:       950     # Country rock solidus (ºC)
         dT:       0.001   # Temperature step (K)
-        Teq:              # Equilibration temperature (ºC)
+        Teq:      None    # Equilibration temperature (ºC)
         Teq_norm: 0.827   # Normalized equilibration temperature (dimensionless)
         koxy:     1       # Ratio of mass fraction of oxygen in bulk assimilant and pristine magma
 

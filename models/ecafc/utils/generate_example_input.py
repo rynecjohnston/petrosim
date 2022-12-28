@@ -1,4 +1,5 @@
-BULK:
+EXAMPLE_IN = 'example.in'
+CONTENTS = """BULK:
     MAGMA:
         M0:     1       # Normalized mass of melt in magma body
         T0:     1320    # Initial standing melt temperature (ºC)
@@ -48,3 +49,8 @@ TRACE:
       ASSIMILANT:
           C0:     26       # Concentration of trace element in assimilant (ppm)
           e0:     0.5118   # Isotopic ratio in assimilant
+"""
+
+
+with open(EXAMPLE_IN, 'w') as file_handle:
+    file_handle.write(CONTENTS)

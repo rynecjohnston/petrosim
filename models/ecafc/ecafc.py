@@ -4,9 +4,12 @@ Fractional Crystallization (EC-AFC) model based on work by Spera & Bohrson J.
 Petrol., 42, 999–1018, 2001.
 """
 
+import copy
+
 import numpy as np
 
 import equilibration as equil
+import results
 
 
 def get_T_iter(Tm, dT, slope_iter):
@@ -39,7 +42,7 @@ class Parameter:
     """
     Base class for each parameter.
     """
-    def __init__(self, value_old, decimals=3):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -48,6 +51,8 @@ class Parameter:
         :type decimals: int
         """
 
+        self.name = name
+        self.name_alt = name_alt
         self.value_old = value_old
         self.decimals = decimals
         self.str = f'{self.value_old:11.{self.decimals}f}'
@@ -167,7 +172,7 @@ class Parameter_Tm(Parameter):
     """
     The specific class to calculate the standing melt temperature.
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -176,7 +181,7 @@ class Parameter_Tm(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
@@ -210,7 +215,7 @@ class Parameter_Ta(Parameter):
     """
     The specific class to calculate the wall rock temperature.
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -219,7 +224,7 @@ class Parameter_Ta(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
@@ -257,7 +262,7 @@ class Parameter_Mm(Parameter):
     """
     The specific class to calculate the magma body mass.
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -266,7 +271,7 @@ class Parameter_Mm(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
@@ -305,7 +310,7 @@ class Parameter_dm(Parameter):
     The specific class to calculate the oxygen isotopic composition of standing
     magma
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -314,7 +319,7 @@ class Parameter_dm(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
         """
@@ -355,7 +360,7 @@ class Parameter_Cm(Parameter):
     """
     The specific class to calculate the conc. of trace element in standing melt.
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -364,7 +369,7 @@ class Parameter_Cm(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFuncTrace(self, slope_iter, x, params_init, params_eq, params_sim,
                        param_trace, trace_iter):
@@ -413,7 +418,7 @@ class Parameter_em(Parameter):
     The specific class to calculate the isotopic ratio of trace element in
     standing melt.
     """
-    def __init__(self, value_old, decimals):
+    def __init__(self, name, value_old, decimals, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -422,7 +427,7 @@ class Parameter_em(Parameter):
         :type decimals: int
         """
 
-        super().__init__(value_old, decimals)
+        super().__init__(name, value_old, decimals, name_alt)
 
     def slopeFuncTrace(self, slope_iter, x, params_init, params_eq, params_sim,
                        param_trace, trace_iter):
@@ -487,23 +492,23 @@ class ECAFC:
         self.params_init = params_init
         self.params_eq = equil.EquilibrationParams(self.params_init.Teq_norm)
         self.params_sim = {
-            'Tm': Parameter_Tm(params_init.Tm0_norm, decimals=4),
-            'Ta': Parameter_Ta(params_init.Ta0_norm, decimals=4),
-            'Mm': Parameter_Mm(params_init.Mm0, decimals=3),
-            'dm': Parameter_dm(params_init.dm0, decimals=3),
+            'Tm': Parameter_Tm('Tm,norm', params_init.Tm0_norm, decimals=3, name_alt='Tm'),
+            'Ta': Parameter_Ta('Ta,norm', params_init.Ta0_norm, decimals=3, name_alt='Ta'),
+            'Mm': Parameter_Mm('Mm', params_init.Mm0, decimals=3),
+            'dm': Parameter_dm('dm', params_init.dm0, decimals=3),
         }
         self.params_traces = []
         for trace in params_init.traces:
             params_trace = {
                 'elem': trace['elem'],
                 'isoratio': trace['isoratio'],
-                'Cm': Parameter_Cm(trace['Cm0'], decimals=3),
-                'em': Parameter_em(trace['em0'], decimals=3),
+                'Cm': Parameter_Cm('Cm', trace['Cm0'], decimals=3),
+                'em': Parameter_em('em', trace['em0'], decimals=3),
             }
             self.params_traces.append(params_trace)
-        self.results = []
+        self.results = results.Results()
 
-    def simulate(self, print_lines=3):
+    def simulate(self):
         """
         Solve the system of nonlinear equations for assimilation and fractional
         crystalization using 4th-order Runge-Kutta (RK4) for each normalized
@@ -520,15 +525,10 @@ class ECAFC:
         Tnorm1 = self.params_init.Tm0_norm
         max_iter = (Tnorm1 - Tnorm0) / dT
 
-        if print_lines:
-            self._printResults(0, max_iter)
-        self._storeResults(0)
         for i, T in enumerate(np.arange(Tnorm1, Tnorm0, -dT), start=1):
             self.params_sim['Tm'].value_old = T
 
-            if print_lines:
-                self._printResults(i, max_iter, lines_shown=print_lines)
-            self._storeResults(i)
+            self.results.store(copy.deepcopy(self.params_sim), copy.deepcopy(self.params_traces))
 
             for param in self.params_sim.values():
                 param.clearSlopes()
@@ -560,104 +560,6 @@ class ECAFC:
                     param_trace.calcNewValue()
                     param_trace.updateValue()
 
-    def _printResults(self, iter, max_iter, lines_shown=3):
-        """
-        Print the results for the beginning and end of the simulation, and
-        truncate the middle. 
-
-        :param iter: Iteration number
-        :type iter: int
-
-        :param max_iter: Maximum number of iterations
-        :type max_iter: int
-
-        :param lines_shown: Number of beginning and final lines to print out
-        :type lines_shown: int
-        """
-
-        if iter == 0:
-            fields = [f'{"":11s}', f'{"":11s}', f'{"":11s}', f'{"":11s}',
-            f'{"":11s}', f'{"":11s}']
-            for trace in self.params_traces:
-                for name in ['elem', 'isoratio']:
-                    fields.append(f'{trace[name]:>11s}')
-            print(' '.join(fields))
-
-            fields = [
-                f'{"Tm,norm":>11s}', f'{"Tm":>11s}', f'{"Ta,norm":>11s}',
-                f'{"Ta":>11s}', f'{"Mm":>11s}', f'{"dm":>11s}'
-            ]
-            for trace in self.params_traces:
-                for name in ['Cm', 'em']:
-                    fields.append(f'{name:>11s}')
-            print(' '.join(fields))
-            return
-
-        T_m = equil.unnormalize_temp(self.params_sim['Tm'].value_old)
-        T_a = equil.unnormalize_temp(self.params_sim['Ta'].value_old)
-
-        if lines_shown == -1:
-            values = [
-                self.params_sim["Tm"].str, f'{T_m:11.2f}',
-                self.params_sim["Ta"].str, f'{T_a:11.2f}',
-                self.params_sim["Mm"].str, self.params_sim["dm"].str
-            ]
-            for trace in self.params_traces:
-                for name in ['Cm', 'em']:
-                    param_trace = trace[name]
-                    values.append(param_trace.str)
-            print(' '.join(values))
-        else:
-            if lines_shown < iter <= max_iter - lines_shown + 1:
-                if iter == lines_shown + 1:
-                    print(f'{"":.>3s}')
-            else:
-                values = [
-                    self.params_sim["Tm"].str, f'{T_m:11.2f}',
-                    self.params_sim["Ta"].str, f'{T_a:11.2f}',
-                    self.params_sim["Mm"].str, self.params_sim["dm"].str
-                ]
-                for trace in self.params_traces:
-                    for name in ['Cm', 'em']:
-                        param_trace = trace[name]
-                        values.append(param_trace.str)
-                print(' '.join(values))
-
-    def _storeResults(self, iter):
-        """
-        Store the results.
-
-        :param iter: Iteration number
-        :type iter: int
-        """
-
-        if iter == 0:
-            fields = ["", "", "", "", "", ""]
-            for trace in self.params_traces:
-                for name in ['elem', 'isoratio']:
-                    fields.append(trace[name])
-            self.results.append(fields)
-            fields = ["Tm_norm", "Tm", "Ta_norm", "Ta", "Mm", "dm"]
-            for trace in self.params_traces:
-                for name in ['Cm', 'em']:
-                    fields.append(f'{name}')
-            self.results.append(fields)
-            return
-
-        T_m = equil.unnormalize_temp(self.params_sim['Tm'].value_old)
-        T_a = equil.unnormalize_temp(self.params_sim['Ta'].value_old)
-
-        values = [
-            self.params_sim["Tm"].value_old, f'{T_m:.2f}',
-            self.params_sim["Ta"].value_old, f'{T_a:.2f}',
-            self.params_sim["Mm"].value_old, self.params_sim["dm"].value_old
-        ]
-        for trace in self.params_traces:
-            for name in ['Cm', 'em']:
-                param_trace = trace[name]
-                values.append(param_trace.value_old)
-        self.results.append(values)
-
 
 """
 Below is an example usage of the API.
@@ -672,4 +574,6 @@ if __name__ == '__main__':
     params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
 
     ecafc = ECAFC(params_init)
-    ecafc.simulate(print_lines=4)
+    ecafc.simulate()
+    ecafc.results.print()
+    #ecafc.results.write('out.csv')

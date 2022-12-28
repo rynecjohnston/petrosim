@@ -38,12 +38,6 @@ def read_input_file(infile):
     return ldr.Parameters(**dataclasses.asdict(ldr.params))
 
 
-def write_output_csv(outcsv, results):
-    with open(outcsv, 'w', newline='') as filehandle:
-        writer = csv.writer(filehandle)
-        writer.writerows(results)
-
-
 def main():
     args = parse_cmdline()
     validate_args(args)
@@ -57,8 +51,9 @@ def main():
         params.Teq_norm = equil.normalize_temp(params.Teq)
 
     afc = ecafc.ECAFC(params)
-    afc.simulate(print_lines=args.print)
-    write_output_csv(args.outcsv, afc.results)
+    afc.simulate()
+    afc.results.print(args.print)
+    afc.results.write(args.outcsv)
 
 
 if __name__ == '__main__':

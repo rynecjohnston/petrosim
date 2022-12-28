@@ -29,7 +29,8 @@ SCHEMA_COMPONENT_BULK = Schema({
 SCHEMA_OTHER = Schema({
     Required('Ts'): Coerce(float),
     Required('dT'): Coerce(float),
-    Required('Teq'): Coerce(float),
+    Required('Teq'): Any(float, int, str, None),
+    Required('Teq_norm'): Any(float, int, str, None),
     Required('koxy'): Coerce(float),
 })
 SCHEMA_BULK = Schema({
@@ -94,7 +95,16 @@ class ParametersReader:
         self.parameters.Ts = self.initial_values[BULK][OTHER]['Ts']
         self.parameters.dT = self.initial_values[BULK][OTHER]['dT']
         self.parameters.koxy = self.initial_values[BULK][OTHER]['koxy']
-        self.parameters.Teq_norm = self.initial_values[BULK][OTHER]['Teq']
+        
+        Teq = self.initial_values[BULK][OTHER]['Teq']
+        Teq_norm = self.initial_values[BULK][OTHER]['Teq_norm']
+        if all([Teq not in ('None', None), Teq_norm  not in ('None', None)]):
+            msg = 'Cannot have both Teq and Teq_norm set at the same time. Either remove one value or set one to "None" and then resubmit.' 
+            exit(msg)
+        if Teq not in ('None', None):
+            self.parameters.Teq_norm = float(self.initial_values[BULK][OTHER]['Teq']) / self.parameters.Tlm
+        else:
+            self.parameters.Teq_norm = float(self.initial_values[BULK][OTHER]['Teq_norm'])
 
         for param in ['Tlm', 'Tla', 'Tm0', 'Ta0', 'Ts']:
             uncorrected_temp = getattr(self.parameters, param)
