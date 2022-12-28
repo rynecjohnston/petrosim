@@ -6,11 +6,9 @@ Crystallization (EC-AFC) model based on work by Spera & Bohrson J. Petrol., 42,
 
 import argparse
 import csv
-import dataclasses
 import os
 
 import ecafc
-import equilibration as equil
 import loader as ldr
 
 
@@ -25,6 +23,13 @@ def parse_cmdline():
 
 
 def validate_args(args):
+    """
+    Do some basic argument validation.
+
+    :param args: User arguments
+    :type args: `argparse.ArgumentParser`
+    """
+
     if not os.path.exists(args.infile):
         exit(f'Could not find input file {args.infile}')
     if args.Teq_norm == 0.0 or (args.Teq_norm and args.Teq_norm <= 0.0):
@@ -34,6 +39,13 @@ def validate_args(args):
 
 
 def read_input_file(infile):
+    """
+    Read the input file.
+
+    :param infile: The input filename.
+    :type infile: str
+    """
+
     ldr.init(infile)
     return ldr.Parameters(**dataclasses.asdict(ldr.params))
 
@@ -48,7 +60,7 @@ def main():
         params.Teq_norm = args.Teq_norm
     if args.Teq is not None:
         params.Teq = args.Teq
-        params.Teq_norm = equil.normalize_temp(params.Teq)
+        params.Teq_norm = params.Teq / params.Tlm
 
     afc = ecafc.ECAFC(params)
     afc.simulate()
