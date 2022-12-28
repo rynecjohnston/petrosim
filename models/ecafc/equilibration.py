@@ -15,6 +15,18 @@ R = 8.31432         # Gas constant
 
 
 @functools.lru_cache
+def normalize_temp(temp):
+    """
+    Normalize the temperature
+
+    :param Tnorm: The temperature in ºC
+    :type Tnorm: float
+    """
+
+    return (temp + ldr.params.K) / ldr.params.Tlm
+
+
+@functools.lru_cache
 def unnormalize_temp(Tnorm):
     """
     Unnormalize the temperature

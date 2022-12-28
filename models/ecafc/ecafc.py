@@ -50,7 +50,7 @@ class Parameter:
 
         self.value_old = value_old
         self.decimals = decimals
-        self.str = f'{self.value_old:8.{self.decimals}f}'
+        self.str = f'{self.value_old:11.{self.decimals}f}'
         self.value_new = None
         self.dy_dx = None
         self.slopes = [0.0]
@@ -160,7 +160,7 @@ class Parameter:
 
         self.value_old = self.value_new
         self.value_new = None
-        self.str = f'{self.value_old:8.{self.decimals}f}'
+        self.str = f'{self.value_old:11.{self.decimals}f}'
 
 
 class Parameter_Tm(Parameter):
@@ -501,6 +501,7 @@ class ECAFC:
                 'em': Parameter_em(trace['em0'], decimals=3),
             }
             self.params_traces.append(params_trace)
+        self.results = []
 
     def simulate(self, print_lines=3):
         """
@@ -521,11 +522,13 @@ class ECAFC:
 
         if print_lines:
             self._printResults(0, max_iter)
+        self._storeResults(0)
         for i, T in enumerate(np.arange(Tnorm1, Tnorm0, -dT), start=1):
             self.params_sim['Tm'].value_old = T
 
             if print_lines:
                 self._printResults(i, max_iter, lines_shown=print_lines)
+            self._storeResults(i)
 
             for param in self.params_sim.values():
                 param.clearSlopes()
@@ -573,13 +576,20 @@ class ECAFC:
         """
 
         if iter == 0:
+            fields = [f'{"":11s}', f'{"":11s}', f'{"":11s}', f'{"":11s}',
+            f'{"":11s}', f'{"":11s}']
+            for trace in self.params_traces:
+                for name in ['elem', 'isoratio']:
+                    fields.append(f'{trace[name]:>11s}')
+            print(' '.join(fields))
+
             fields = [
-                f'{"Tm,norm":>8s}', f'{"Tm":>8s}', f'{"Ta,norm":>8s}',
-                f'{"Ta":>8s}', f'{"Mm":>8s}', f'{"dm":>8s}'
+                f'{"Tm,norm":>11s}', f'{"Tm":>11s}', f'{"Ta,norm":>11s}',
+                f'{"Ta":>11s}', f'{"Mm":>11s}', f'{"dm":>11s}'
             ]
             for trace in self.params_traces:
                 for name in ['Cm', 'em']:
-                    fields.append(f'{name:>8s}')
+                    fields.append(f'{name:>11s}')
             print(' '.join(fields))
             return
 
@@ -588,14 +598,14 @@ class ECAFC:
 
         if lines_shown == -1:
             values = [
-                self.params_sim["Tm"].str, f'{T_m:8.2f}',
-                self.params_sim["Ta"].str, f'{T_a:8.2f}',
+                self.params_sim["Tm"].str, f'{T_m:11.2f}',
+                self.params_sim["Ta"].str, f'{T_a:11.2f}',
                 self.params_sim["Mm"].str, self.params_sim["dm"].str
             ]
             for trace in self.params_traces:
                 for name in ['Cm', 'em']:
                     param_trace = trace[name]
-                    values.extend([param_trace.str, param_trace.str])
+                    values.append(param_trace.str)
             print(' '.join(values))
         else:
             if lines_shown < iter <= max_iter - lines_shown + 1:
@@ -603,8 +613,8 @@ class ECAFC:
                     print(f'{"":.>3s}')
             else:
                 values = [
-                    self.params_sim["Tm"].str, f'{T_m:8.2f}',
-                    self.params_sim["Ta"].str, f'{T_a:8.2f}',
+                    self.params_sim["Tm"].str, f'{T_m:11.2f}',
+                    self.params_sim["Ta"].str, f'{T_a:11.2f}',
                     self.params_sim["Mm"].str, self.params_sim["dm"].str
                 ]
                 for trace in self.params_traces:
@@ -612,6 +622,41 @@ class ECAFC:
                         param_trace = trace[name]
                         values.append(param_trace.str)
                 print(' '.join(values))
+
+    def _storeResults(self, iter):
+        """
+        Store the results.
+
+        :param iter: Iteration number
+        :type iter: int
+        """
+
+        if iter == 0:
+            fields = ["", "", "", "", "", ""]
+            for trace in self.params_traces:
+                for name in ['elem', 'isoratio']:
+                    fields.append(trace[name])
+            self.results.append(fields)
+            fields = ["Tm_norm", "Tm", "Ta_norm", "Ta", "Mm", "dm"]
+            for trace in self.params_traces:
+                for name in ['Cm', 'em']:
+                    fields.append(f'{name}')
+            self.results.append(fields)
+            return
+
+        T_m = equil.unnormalize_temp(self.params_sim['Tm'].value_old)
+        T_a = equil.unnormalize_temp(self.params_sim['Ta'].value_old)
+
+        values = [
+            self.params_sim["Tm"].value_old, f'{T_m:.2f}',
+            self.params_sim["Ta"].value_old, f'{T_a:.2f}',
+            self.params_sim["Mm"].value_old, self.params_sim["dm"].value_old
+        ]
+        for trace in self.params_traces:
+            for name in ['Cm', 'em']:
+                param_trace = trace[name]
+                values.append(param_trace.value_old)
+        self.results.append(values)
 
 
 """
