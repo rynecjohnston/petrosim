@@ -492,10 +492,20 @@ class ECAFC:
         self.params_init = params_init
         self.params_eq = equil.EquilibrationParams(self.params_init.Teq_norm)
         self.params_sim = {
-            'Tm': Parameter_Tm('Tm,norm', params_init.Tm0_norm, decimals=3, name_alt='Tm'),
-            'Ta': Parameter_Ta('Ta,norm', params_init.Ta0_norm, decimals=3, name_alt='Ta'),
-            'Mm': Parameter_Mm('Mm', params_init.Mm0, decimals=3),
-            'dm': Parameter_dm('dm', params_init.dm0, decimals=3),
+            'Tm':
+            Parameter_Tm('Tm,norm',
+                         params_init.Tm0_norm,
+                         decimals=3,
+                         name_alt='Tm'),
+            'Ta':
+            Parameter_Ta('Ta,norm',
+                         params_init.Ta0_norm,
+                         decimals=3,
+                         name_alt='Ta'),
+            'Mm':
+            Parameter_Mm('Mm', params_init.Mm0, decimals=3),
+            'dm':
+            Parameter_dm('dm', params_init.dm0, decimals=3),
         }
         self.params_traces = []
         for trace in params_init.traces:
@@ -528,7 +538,8 @@ class ECAFC:
         for i, T in enumerate(np.arange(Tnorm1, Tnorm0, -dT), start=1):
             self.params_sim['Tm'].value_old = T
 
-            self.results.store(copy.deepcopy(self.params_sim), copy.deepcopy(self.params_traces))
+            self.results.store(copy.deepcopy(self.params_sim),
+                               copy.deepcopy(self.params_traces))
 
             for param in self.params_sim.values():
                 param.clearSlopes()
@@ -568,7 +579,6 @@ if __name__ == '__main__':
     import dataclasses
 
     import loader as ldr
-
 
     ldr.init('example.in')
     params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
