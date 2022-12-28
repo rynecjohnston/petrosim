@@ -1,3 +1,9 @@
+"""
+This is the driver for the Energy-Constrained Assimilation Fractional
+Crystallization (EC-AFC) model based on work by Spera & Bohrson J. Petrol., 42,
+999–1018, 2001.
+"""
+
 import argparse
 import csv
 import dataclasses
