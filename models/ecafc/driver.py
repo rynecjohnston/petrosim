@@ -6,10 +6,11 @@ Crystallization (EC-AFC) model based on work by Spera & Bohrson J. Petrol., 42,
 
 import argparse
 import csv
+import dataclasses
 import os
 
-import ecafc
-import loader as ldr
+from petrosim.models.ecafc import ecafc
+from petrosim.models.ecafc import loader as ldr
 
 
 def parse_cmdline():

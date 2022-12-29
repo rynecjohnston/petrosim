@@ -7,7 +7,7 @@ import functools
 
 import numpy as np
 
-import loader as ldr
+from petrosim.models.ecafc import loader as ldr
 
 
 @functools.lru_cache

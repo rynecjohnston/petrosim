@@ -6,7 +6,7 @@ to screen and writing to file.
 
 import csv
 
-import equilibration as equil
+from petrosim.models.ecafc import equilibration as equil
 
 MAXLEN = 8
 PARAMETERS_TRACE = {'Cm': 'elem', 'em': 'isoratio'}

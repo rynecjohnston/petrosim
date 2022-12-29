@@ -8,8 +8,8 @@ import copy
 
 import numpy as np
 
-import equilibration as equil
-import results
+from petrosim.models.ecafc import equilibration as equil
+from petrosim.models.ecafc import results
 
 
 def get_T_iter(Tm, dT, slope_iter):
@@ -578,7 +578,7 @@ Below is an example usage of the API.
 if __name__ == '__main__':
     import dataclasses
 
-    import loader as ldr
+    from petrosim.models.ecafc import loader as ldr
 
     ldr.init('example.in')
     params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
