@@ -1,5 +1,10 @@
 EXAMPLE_IN = 'example.in'
-CONTENTS = """BULK:
+CONTENTS = """# This is the input file for the EC-AFC simulation in YAML format.
+# YAML allows for comments, ignoring text following the # symbol, like this and
+# the parameters' descriptions. While the BULK parameters are required, the
+# TRACE parameters optional.
+
+BULK:
     MAGMA:
         M0:     1       # Normalized mass of melt in magma body
         T0:     1320    # Initial standing melt temperature (ºC)
@@ -52,5 +57,10 @@ TRACE:
 """
 
 
-with open(EXAMPLE_IN, 'w') as file_handle:
-    file_handle.write(CONTENTS)
+def write():
+    with open(EXAMPLE_IN, 'w') as file_handle:
+        file_handle.write(CONTENTS)
+
+
+if __name__ == '__main__':
+    write()
