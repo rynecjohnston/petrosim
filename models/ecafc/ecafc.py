@@ -55,7 +55,7 @@ class Parameter:
         self.name_alt = name_alt
         self.value_old = value_old
         self.decimals = decimals
-        self.str = f'{self.value_old:11.{self.decimals}f}'
+        self.str = f'{self.value_old:8.{self.decimals}f}'
         self.value_new = None
         self.dy_dx = None
         self.slopes = [0.0]
