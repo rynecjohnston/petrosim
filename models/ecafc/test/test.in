@@ -1,0 +1,50 @@
+BULK:
+    MAGMA:
+        M0:     1       # Normalized mass of melt in magma body
+        T0:     1320    # Initial standing melt temperature (ºC)
+        Tl:     1320    # Pristine standing melt liquidus temperature (ºC)
+        cp:     1484    # Specific heat capacity of magma (J K-1 kg-1)
+        dh:     3.96e5  # Enthalpy of crystallization (dh_cry) (J kg-1)
+        loga:   450     # Logistic parameter a
+        logb:   -10.5   # Logisitc parameter b
+        D0:     1.5     # Bulk distribution coefficient between cumulate and melt
+        dH:     0       # Enthalpy of cumulate/standing melt partition coefficient (J mol-1)
+        d0:     1       # Oxygen isotopic composition of standing magma
+
+    ASSIMILANT:
+        M0:     0       # Normalized mass of anatectic melt
+        T0:     600     # Initial wall rock temperature (ºC)
+        Tl:     1100    # Wall rock liquidus temperature (ºC)
+        cp:     1388    # Specific heat capacity of assimilant (J K-1 kg-1)
+        dh:     3.54e5  # Enthalpy of fusion (dh_fus) (J kg-1)
+        loga:   400     # Logistic parameter a
+        logb:   -11     # Logisitc parameter b
+        D0:     1.5     # Bulk distribution coefficient between wall rock and anatectic melt
+        dH:     0       # Enthalpy of wall rock/anatectic melt partition coefficient (J mol-1)
+        d0:     1       # Oxygen isotopic composition of assimilant
+
+    OTHER:
+        Ts:       950     # Country rock solidus (ºC)
+        dT:       0.001   # Temperature step (K)
+        Teq:              # Equilibration temperature (ºC)
+        Teq_norm: 0.827   # Normalized equilibration temperature (dimensionless)
+        koxy:     1       # Ratio of mass fraction of oxygen in bulk assimilant and pristine magma
+
+TRACE:
+    - elem:       Sr         # Element
+      isoratio:   87Sr/86Sr  # Isotopic ratio
+      MAGMA:
+          C0:     700      # Concentration of trace element in standing melt (ppm)
+          e0:     0.7035   # Isotopic ratio in standing melt
+      ASSIMILANT:
+          C0:     350      # Concentration of trace element in assimilant (ppm)
+          e0:     0.722    # Isotopic ratio in assimilant
+
+    - elem:       Nd          # Element
+      isoratio:   143Nd/144Nd # Isotopic ratio
+      MAGMA:
+          C0:     35       # Concentration of trace element in standing melt (ppm)
+          e0:     0.513    # Isotopic ratio in standing melt
+      ASSIMILANT:
+          C0:     26       # Concentration of trace element in assimilant (ppm)
+          e0:     0.5118   # Isotopic ratio in assimilant
