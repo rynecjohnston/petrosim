@@ -577,10 +577,12 @@ Below is an example usage of the API.
 """
 if __name__ == '__main__':
     import dataclasses
+    import os
 
     from petrosim.models.ecafc import loader as ldr
 
-    ldr.init('example.in')
+
+    ldr.init(os.path.join(os.path.dirname(ldr.__file__), 'example.in'))
     params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
 
     ecafc = ECAFC(params_init)

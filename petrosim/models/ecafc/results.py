@@ -8,6 +8,7 @@ import csv
 
 from petrosim.models.ecafc import equilibration as equil
 
+
 MAXLEN = 8
 PARAMETERS_TRACE = {'Cm': 'elem', 'em': 'isoratio'}
 

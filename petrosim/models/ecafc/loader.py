@@ -189,6 +189,8 @@ def init(INFILE):
 
 
 if __name__ == '__main__':
-    INFILE = 'example.in'
+    import os
+
+    INFILE = os.path.join(os.path.dirname(__file__), 'example.in')
     params = ParametersReader(INFILE)
     print(params.parameters)
