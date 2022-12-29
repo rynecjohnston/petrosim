@@ -7,36 +7,35 @@ from petrosim.models.ecafc import ecafc
 from petrosim.models.ecafc import equilibration as equil
 from petrosim.models.ecafc import loader as ldr
 
-
 EXAMPLE_INFILE = 'test.in'
 
 
 class TestTopLevelFuncs(unittest.TestCase):
-
     def test_get_T_iter(self):
         Tm = 1.000
         dT = 0.001
         slope_iter = 2
         expect = 0.995
-        assert ecafc.get_T_iter(Tm, dT, slope_iter) == pytest.approx(expect, 0.01)
+        assert ecafc.get_T_iter(Tm, dT,
+                                slope_iter) == pytest.approx(expect, 0.01)
 
 
 class TestParameter(unittest.TestCase):
-
     def setUp(self):
         ldr.init(EXAMPLE_INFILE)
         self.params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
         self.params_eq = equil.EquilibrationParams(self.params_init.Teq_norm)
         self.params_sim = {
-            'Tm': ecafc.Parameter_Tm('Tm,norm', 1.000),            
+            'Tm': ecafc.Parameter_Tm('Tm,norm', 1.000),
             'Ta': ecafc.Parameter_Ta('Ta,norm', 0.548),
             'Mm': ecafc.Parameter_Mm('Mm', 1.000)
         }
-        self.params_traces = [{'Cm': ecafc.Parameter_Cm('Cm', 700.0, decimals=3)}]
+        self.params_traces = [{
+            'Cm': ecafc.Parameter_Cm('Cm', 700.0, decimals=3)
+        }]
 
         self.Tm = 1.000
         self.dT = 0.001
-
 
     def test_Parameter(self):
         name = 'Ta_norm'
@@ -51,12 +50,14 @@ class TestParameter(unittest.TestCase):
         for h in range(4):
             T = ecafc.get_T_iter(self.Tm, self.dT, h)
             param = self.params_sim['Ta']
-            param.calcSlope(h, T, self.params_init, self.params_eq, self.params_sim)
+            param.calcSlope(h, T, self.params_init, self.params_eq,
+                            self.params_sim)
             param.addSlope(self.dT)
 
         slope_iter = 2
         expect = 0.549
-        assert self.params_sim['Ta'].thisStepValue(slope_iter) == pytest.approx(expect, 0.01)
+        assert self.params_sim['Ta'].thisStepValue(
+            slope_iter) == pytest.approx(expect, 0.01)
 
     def test_CalcSlope(self):
         param = self.params_sim['Ta']
@@ -64,7 +65,8 @@ class TestParameter(unittest.TestCase):
         slope_iters = 2
         for h in range(slope_iters):
             T = ecafc.get_T_iter(self.Tm, self.dT, h)
-            param.calcSlope(h, T, self.params_init, self.params_eq, self.params_sim)
+            param.calcSlope(h, T, self.params_init, self.params_eq,
+                            self.params_sim)
             param.addSlope(self.dT)
 
         expect = -1.28
@@ -78,11 +80,14 @@ class TestParameter(unittest.TestCase):
         slope_iters = 2
         for h in range(slope_iters):
             T = ecafc.get_T_iter(self.Tm, self.dT, h)
-            param_Ta.calcSlope(h, T, self.params_init, self.params_eq, self.params_sim)
+            param_Ta.calcSlope(h, T, self.params_init, self.params_eq,
+                               self.params_sim)
             param_Ta.addSlope(self.dT)
-            param_Mm.calcSlope(h, T, self.params_init, self.params_eq, self.params_sim)
+            param_Mm.calcSlope(h, T, self.params_init, self.params_eq,
+                               self.params_sim)
             param_Mm.addSlope(self.dT)
-            param_Cm.calcSlopeTrace(h, T, self.params_init, self.params_eq, self.params_sim, self.params_traces[0], 0)
+            param_Cm.calcSlopeTrace(h, T, self.params_init, self.params_eq,
+                                    self.params_sim, self.params_traces[0], 0)
             param_Cm.addSlope(self.dT)
 
         expect = 195.60
@@ -121,7 +126,6 @@ class TestParameter(unittest.TestCase):
 
 
 class TestECAFC(unittest.TestCase):
-
     def setUp(self):
         ldr.init(EXAMPLE_INFILE)
         self.params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))

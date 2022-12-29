@@ -146,7 +146,7 @@ def melt_productivity_T_deriv(T, component):
         Tlx = ldr.params.Tlm
 
     numer = -1 * loga_x * logb_x * np.exp(logb_x * phi(T, component))
-    denom = (loga_x * np.exp(logb_x * phi(T, component)) + 1) ** 2
+    denom = (loga_x * np.exp(logb_x * phi(T, component)) + 1)**2
     fxprime = phi_prime(component) * numer / denom
     return fxprime
 
@@ -266,8 +266,13 @@ def conserv_energy_dTa_dTm(Tm, Ta, Ma0):
     faprime = melt_productivity_T_deriv(temp_a, ldr.ASSIMILANT)
 
     term1 = -1 / Ma0
-    term2_num = (ldr.params.Tlm * ldr.params.cpm) + (ldr.params.dhm * fmprime) + (Ma0 * ldr.params.cpa * ldr.params.Tlm * fa)
-    term2_den = (ldr.params.Tlm * ldr.params.cpa * (1 - fa)) + (ldr.params.dha + ldr.params.cpa * ldr.params.Tlm * (Tm - Ta)) * faprime
+    term2_num = (ldr.params.Tlm * ldr.params.cpm) + (
+        ldr.params.dhm * fmprime) + (Ma0 * ldr.params.cpa * ldr.params.Tlm *
+                                     fa)
+    term2_den = (
+        ldr.params.Tlm * ldr.params.cpa *
+        (1 - fa)) + (ldr.params.dha + ldr.params.cpa * ldr.params.Tlm *
+                     (Tm - Ta)) * faprime
     return term1 * term2_num / term2_den
 
 
@@ -361,7 +366,7 @@ def conc_trace_elem_in_anatectic_melt(Ta, Ca0):
 
     fa = melt_productivity(temp_a, ldr.ASSIMILANT)
     Da = distribution_coefficient(Ta, ldr.ASSIMILANT)
-    return (Ca0 / Da) * ((1 - fa) ** ((1 - Da) / Da))
+    return (Ca0 / Da) * ((1 - fa)**((1 - Da) / Da))
 
 
 @functools.lru_cache
@@ -475,12 +480,11 @@ class EquilibrationParams:
     """
     Perform a preliminary equilibration.
     """
-
     def __init__(self, Tnorm):
         """
         Calculate the various quantities at the given normalized equilibration
         temperature
-    
+
         :param Tnorm: The normalized temperature
         :type Tnorm: float
         """
@@ -499,7 +503,7 @@ class EquilibrationParams:
     def printParams(self, header=False):
         """
         Print the equilibrated parameters
-    
+
         :param header: Whether to print the header
         :type header: bool
         """
@@ -515,9 +519,13 @@ class EquilibrationParams:
             'Mm': 5,
         }
         if header:
-            print_line = '  '.join([f'{data:>{length}s}' for data, length in data_len.items()])
+            print_line = '  '.join(
+                [f'{data:>{length}s}' for data, length in data_len.items()])
             print(print_line)
-        print_line = '  '.join([f'{getattr(self, data):>{length}.3f}' for data, length in data_len.items()])
+        print_line = '  '.join([
+            f'{getattr(self, data):>{length}.3f}'
+            for data, length in data_len.items()
+        ])
         print(print_line)
 
 

@@ -14,12 +14,28 @@ from petrosim.models.ecafc import loader as ldr
 
 
 def parse_cmdline():
-    p = argparse.ArgumentParser(description='EC-AFC: Energy-Constrained Assimilation Fractional Crystallization petrological model\nbased on Spera & Bohrson J. Petrol., 42, 999–1018, 2001.')
+    p = argparse.ArgumentParser(
+        description=
+        'EC-AFC: Energy-Constrained Assimilation Fractional Crystallization petrological model\nbased on Spera & Bohrson J. Petrol., 42, 999–1018, 2001.'
+    )
     p.add_argument('infile', help='Input YAML file.')
     p.add_argument('outcsv', help='Output CSV file.')
-    p.add_argument('-print', type=int, default=0, help='Number of lines of results to print. (n >= 1 to print n lines, n = 0 for no print, and n = -1 to print all lines)')
-    p.add_argument('-Teq', type=float, default=None, help='Equilibrate to this alternative temperature (ºC).')
-    p.add_argument('-Teq_norm', type=float, default=None, help='Equilibrate to this alternative normalized temperature.')
+    p.add_argument(
+        '-print',
+        type=int,
+        default=0,
+        help=
+        'Number of lines of results to print. (n >= 1 to print n lines, n = 0 for no print, and n = -1 to print all lines)'
+    )
+    p.add_argument('-Teq',
+                   type=float,
+                   default=None,
+                   help='Equilibrate to this alternative temperature (ºC).')
+    p.add_argument(
+        '-Teq_norm',
+        type=float,
+        default=None,
+        help='Equilibrate to this alternative normalized temperature.')
     return p.parse_args()
 
 
