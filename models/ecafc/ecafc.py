@@ -508,14 +508,15 @@ class ECAFC:
             Parameter_dm('dm', params_init.dm0, decimals=3),
         }
         self.params_traces = []
-        for trace in params_init.traces:
-            params_trace = {
-                'elem': trace['elem'],
-                'isoratio': trace['isoratio'],
-                'Cm': Parameter_Cm('Cm', trace['Cm0'], decimals=3),
-                'em': Parameter_em('em', trace['em0'], decimals=3),
-            }
-            self.params_traces.append(params_trace)
+        if params_init.traces:
+            for trace in params_init.traces:
+                params_trace = {
+                    'elem': trace['elem'],
+                    'isoratio': trace['isoratio'],
+                    'Cm': Parameter_Cm('Cm', trace['Cm0'], decimals=3),
+                    'em': Parameter_em('em', trace['em0'], decimals=3),
+                }
+                self.params_traces.append(params_trace)
         self.results = results.Results()
 
     def simulate(self):
@@ -533,7 +534,6 @@ class ECAFC:
         dT = self.params_init.dT
         Tnorm0 = self.params_init.Teq_norm - dT
         Tnorm1 = self.params_init.Tm0_norm
-        max_iter = (Tnorm1 - Tnorm0) / dT
 
         for i, T in enumerate(np.arange(Tnorm1, Tnorm0, -dT), start=1):
             self.params_sim['Tm'].value_old = T
