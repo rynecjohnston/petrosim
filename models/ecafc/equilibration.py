@@ -525,6 +525,13 @@ class EquilibrationParams:
 Below is an example usage of the API.
 """
 if __name__ == '__main__':
-    Teq_norm = 0.9040
+    import dataclasses
+
+    from petrosim.models.ecafc import loader as ldr
+
+    ldr.init('example.in')
+    #params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
+
+    Teq_norm = 0.8270
     params_eq = EquilibrationParams(Teq_norm)
     params_eq.printParams(header=True)

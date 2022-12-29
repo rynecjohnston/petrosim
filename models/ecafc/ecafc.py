@@ -172,7 +172,7 @@ class Parameter_Tm(Parameter):
     """
     The specific class to calculate the standing melt temperature.
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -215,7 +215,7 @@ class Parameter_Ta(Parameter):
     """
     The specific class to calculate the wall rock temperature.
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -262,7 +262,7 @@ class Parameter_Mm(Parameter):
     """
     The specific class to calculate the magma body mass.
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -310,7 +310,7 @@ class Parameter_dm(Parameter):
     The specific class to calculate the oxygen isotopic composition of standing
     magma
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -360,7 +360,7 @@ class Parameter_Cm(Parameter):
     """
     The specific class to calculate the conc. of trace element in standing melt.
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
@@ -418,7 +418,7 @@ class Parameter_em(Parameter):
     The specific class to calculate the isotopic ratio of trace element in
     standing melt.
     """
-    def __init__(self, name, value_old, decimals, name_alt=None):
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
         """
         :param value_old: Initial value for this iteration
         :type value_old: float
