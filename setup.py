@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='petrosim',
-    version='0.1',
+    version='0.0.1',
     description='A collection of petrological simulation tools.',
     packages=[
         'petrosim',
