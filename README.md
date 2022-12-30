@@ -7,7 +7,7 @@ PetroSim can be installed from the source or with `pip` as follows:
     pip install petrosim
 
 ## EC-AFC
-The EC-AFC<sup>1</sup> model is a tool for simulating the evolution of the geochemical composition of a a magma body as it intrudes into country rock, assimilating wallrock into the melt and fractionally crystallizing out cumulates.
+The EC-AFC<sup>1</sup> model is a tool for simulating the evolution of the geochemical composition of a magma body as it intrudes into country rock, assimilating wallrock into the melt and fractionally crystallizing out cumulates.
 
 ### Usage
 An EC-AFC simulation is run with the standalone driver script using the command below, taking the initial parameters via a YAML formatted `input.in` file and outputting the results in the `output.csv` CSV file:
