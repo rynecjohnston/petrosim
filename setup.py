@@ -2,12 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name='petrosim',
-    version='0.0.1',
+    version='0.0.2',
     description='A collection of petrological simulation tools.',
     packages=[
         'petrosim',
         'petrosim.models',
-        'petrosim.models.ecafc'
+        'petrosim.models.ecafc',
+        'petrosim.models.ecafc.utils'
     ],
     package_data={
         '': [
