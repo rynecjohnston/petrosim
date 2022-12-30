@@ -12,11 +12,11 @@ The EC-AFC<sup>1</sup> model is a tool for simulating the evolution of the geoch
 ### Usage
 An EC-AFC simulation is run with the standalone driver script using the command below, taking the initial parameters via a YAML formatted `input.in` file and outputting the results in the `output.csv` CSV file:
 
-    python3 petrosim.models.ecafc.driver input.in output.csv
+    python3 -m petrosim.models.ecafc.driver input.in output.csv
 
-An example input file is located at `petrosim/models/ecafc/example.in`, and this file may be generated at any location by running the utility script from the desired location in the following manner:
+An example input file is located at `petrosim/models/ecafc/example.in`. This file may be generated at any location by running the utility script from the desired location in the following manner:
 
-    python3 petrosim.models.ecafc.utils.generate_example_input
+    python3 -m petrosim.models.ecafc.utils.generate_example_input
 
 Running the simulation by default prints to screen the first and last three lines of the results, but this may be changed to a different number of *N* lines or turned off entirely with *N*=0 with the `-print <N>` flag in the command.
 
