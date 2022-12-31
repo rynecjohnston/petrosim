@@ -1,4 +1,5 @@
 import dataclasses
+import os
 import unittest
 
 import pytest
@@ -7,7 +8,8 @@ from petrosim.models.ecafc import ecafc
 from petrosim.models.ecafc import equilibration as equil
 from petrosim.models.ecafc import loader as ldr
 
-EXAMPLE_INFILE = 'test.in'
+
+EXAMPLE_INFILE = os.path.join(os.path.dirname(__file__), 'test.in')
 
 
 class TestTopLevelFuncs(unittest.TestCase):
