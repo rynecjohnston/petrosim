@@ -190,6 +190,9 @@ def pretty_label(string):
                 isotopes.append(isotopize(elem))
             specific = '/'.join(isotopes)
             new_strings.append(specific)
+        else:
+            isotope = isotopize(specific)
+            new_strings.append(isotope)
     else:
         param = string
     param_fmt = REPLACEMENTS[param] if param in REPLACEMENTS else param
