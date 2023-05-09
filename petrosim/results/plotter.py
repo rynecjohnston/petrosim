@@ -15,7 +15,6 @@ REPLACEMENTS = {
     'dm': r'$δ_m$',
     'Cm': r'$C_m$',
     'em': r'$ε_m$',
-    'Mr': r'$M_r$',
 }
 UNITS = {
     'Tm': 'K',
@@ -27,7 +26,8 @@ UNITS = {
 def parse_cmdline():
     p = argparse.ArgumentParser(
         description='Make a 2D plot comparing two quantities.')
-    p.add_argument('incsv', help='Filename of the output CSV file to analyze.')
+    p.add_argument('incsv',
+                   help='Filename of the output CSV file to analyze.')
     p.add_argument(
         '-x',
         required=True,
@@ -50,8 +50,6 @@ def parse_cmdline():
                    dest='show',
                    action='store_false',
                    help='Do not show the plot on screen.')
-    p.add_argument('-rev_x', action='store_true', help='Reverse x-axis.')
-    p.add_argument('-rev_y', action='store_true', help='Reverse y-axis.')
     return p.parse_args()
 
 
@@ -122,22 +120,11 @@ def get_data(reader, col):
 
     data = []
     for row in reader:
-        value = row.get(col)
-        if value is not None:
-            data.append(value)
-        else:
-            exit(f'Could not find "{col}" column in output file.')
+        data.append(row[col])
     return data
 
 
-def plot_cols(reader,
-              x_col,
-              y_col,
-              title=None,
-              filename=None,
-              save=True,
-              show=True,
-              rev=(False, False)):
+def plot_cols(reader, x_col, y_col, title=None, filename=None, save=True, show=True):
     """
     Generate the 2D plot of the specified x and y values.
 
@@ -161,9 +148,6 @@ def plot_cols(reader,
 
     :param show: Whether to show the plot on screen.
     :type show: bool
-
-    :param rev: Which axis to reverse.
-    :type rev: Tuple[bool]
     """
 
     x = get_data(reader, x_col)
@@ -173,10 +157,6 @@ def plot_cols(reader,
     ax.plot(x, y)
     if title:
         ax.set_title(title, fontsize=16)
-    if rev[0]:
-        ax.invert_xaxis()
-    if rev[1]:
-        ax.invert_yaxis()
     ax.set_xlabel(pretty_label(x_col), fontsize=14)
     ax.set_ylabel(pretty_label(y_col), fontsize=14)
     ax.tick_params(axis='both', which='major', labelsize=14)
@@ -276,8 +256,7 @@ def main():
               title=args.title,
               filename=args.outname,
               save=args.save,
-              show=args.show,
-              rev=(args.rev_x, args.rev_y))
+              show=args.show)
 
 
 if __name__ == '__main__':
