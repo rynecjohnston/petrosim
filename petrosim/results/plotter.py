@@ -5,6 +5,7 @@ import re
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+
 NUM_HEADER_ROWS = 2
 REPLACEMENTS = {
     'Tm': r'$T_m$',

@@ -20,7 +20,7 @@ An EC-AFC simulation is run with the standalone driver script using the command 
 
 Likewise, an EC-RAFC simulation can be run by replacing `petrosim.models.ecafc.driver` with `petrosim.models.ecrafc.driver` in the command above.
 
-Example input files are located at `petrosim/models/<model_type>/example.in`. This file may be generated at any location by running the utility script from the desired location in the following manner by specifyting the model type (either "ecafc" or "ecrafc"):
+Example input files are located at `petrosim/models/<model_type>/example.in`. This file may be generated at any location by running the utility script from the desired location in the following manner by specifying the model type (either "ecafc" or "ecrafc"):
 
     python3 -m petrosim.utils.generate_example_input <model_type>
 
