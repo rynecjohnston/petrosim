@@ -35,3 +35,7 @@ This will both show a figure on screen and write a PNG file named `Tm-Sr_Cm.png`
 ## References
 1. Spera, F. J.; Bohrson, W. A. Energy-Constrained Open-System Magmatic Processes I. General Model and Energy-Constrained Assimilation and Fractional Crystallization (EC-AFC) Formulation *J. Petrol.*, **2001**, *42*, 999-1018, DOI: [10.1093/petrology/42.5.999](https://doi.org/10.1093/petrology/42.5.999)
 2. Spera, F. J.; Bohrson, W. A. Energy-Constrained Open-System Magmatic Processes 3. Energy-Constrained Recharge, Assimilation and Fractional Crystallization (EC-RAFC) *Geochem. Geophys. Geosyst.*, **2002**, *3*, 8001, DOI: [10.1029/2007GC001781](https://doi.org/10.1029/2007GC001781)
+
+---
+
+_For inquiries about the usage of this code, please email me, Ryne C. Johnston: [johnston.ryne@gmail.com](mailto:johnston.ryne@gmail.com). To report a problem, either [open a new issue here on GitHub](https://github.com/rynecjohnston/petrosim/issues/new) or email me directly. For questions regarding the scientific underpinnings of these models, I refer you to the authors of the [original works](#references) that this package was based on._
