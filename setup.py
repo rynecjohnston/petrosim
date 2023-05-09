@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 README = """
-i# PetroSim
+# PetroSim
 PetroSim is a collection of petrological simulation tools.
 
 ## Installation
@@ -15,7 +15,7 @@ The EC-AFC<sup>1</sup> model is a tool for simulating the evolution of the geoch
 ## EC-RAFC
 The EC-RAFC<sup>2</sup> model is a tool for simulating the evolution of the geochemical composition of a magma body as it and subsequent recharges intrude into country rock, assimilating wallrock into the melt and fractionally crystallizing out cumulates.
 
-### Usage
+## Usage
 An EC-AFC simulation is run with the standalone driver script using the command below, taking the initial parameters via a YAML formatted `input.in` file and outputting the results in the `output.csv` CSV file:
 
     python3 -m petrosim.models.ecafc.driver input.in output.csv
