@@ -1,0 +1,77 @@
+BULK:
+    MAGMA:
+        M0:     1       # Normalized mass of melt in magma body
+        T0:     1300    # Initial standing melt temperature (ºC)
+        Tl:     1300    # Pristine standing melt liquidus temperature (ºC)
+        cp:     1484    # Specific heat capacity of magma (J K-1 kg-1)
+        dh:     3.96e5  # Enthalpy of crystallization (dh_cry) (J kg-1)
+        loga:   450     # Logistic parameter a
+        logb:   -11     # Logisitc parameter b
+        D0:     1.5     # Bulk distribution coefficient between cumulate and melt
+        dH:     0       # Enthalpy of cumulate/standing melt partition coefficient (J mol-1)
+        d0:     6.2     # Oxygen isotopic composition of standing magma
+
+    ASSIMILANT:
+        M0:     0       # Normalized mass of anatectic melt
+        T0:     600     # Initial wall rock temperature (ºC)
+        Tl:     1150    # Wall rock liquidus temperature (ºC)
+        cp:     1370    # Specific heat capacity of assimilant (J K-1 kg-1)
+        dh:     2.70e5  # Enthalpy of fusion (dh_fus) (J kg-1)
+        loga:   400     # Logistic parameter a
+        logb:   -11     # Logisitc parameter b
+        D0:     0.05    # Bulk distribution coefficient between wall rock and anatectic melt
+        dH:     0       # Enthalpy of wall rock/anatectic melt partition coefficient (J mol-1)
+        d0:     12      # Oxygen isotopic composition of assimilant
+
+    RECHARGE:
+        M0:     0.3     # Normalized mass of recharge magma
+        T0:     1320    # Initial recharge magma temperature (ºC)
+        Tl:     1320    # Recharge magma liquidus temperature (ºC)
+        cp:     1484    # Specific heat capacity of recharge magma (J K-1 kg-1)
+        dh:     3.96e5  # Enthalpy of crystallization(dh_cry) (J kg-1)
+        loga:   450     # Logistic parameter a
+        logb:   -11     # Logisitc parameter b
+        D0:     1.5     # Bulk distribution coefficient between enclave and recharge melt
+        dH:     0       # Enthalpy of enclave/recharge melt partition coefficient (J mol-1)
+        d0:     7       # Oxygen isotopic composition of recharge magma
+
+    OTHER:
+        Ts:       900   # Country rock solidus (ºC)
+        dT:       0.0005 # Temperature step (K)
+        Teq:            # Equilibration temperature (ºC)
+        Teq_norm: 0.904 # Normalized equilibration temperature (dimensionless)
+        koxy:     1     # Ratio of mass fraction of oxygen in bulk assimilant and pristine magma
+
+RECHARGE_PARAMS:
+    Nrechg:     3       # Number of recharges
+    linear:     False   # Whether recharge event is linear (True) or episodic (False)
+    # The lists below are only for episodic recharge events and are ignored if linear recharge is set to True
+    masses:             # masses of each recharge event
+        - 0.1
+        - 0.1
+        - 0.1
+    temps:              # masses of each recharge event
+        - 1250
+        - 1175
+        - 1155
+    widths:             # widths of the recharge function for each recharge event
+        - 0.3
+        - 0.3
+        - 0.3
+    slopes:             # slopes of the recharge function for each recharge event
+        - 2
+        - 2
+        - 2
+
+TRACE:
+    - elem:       Sr         # Element
+      isoratio:   87Sr/86Sr  # Isotopic ratio
+      MAGMA:
+          C0:     700      # Concentration of trace element in standing melt (ppm)
+          e0:     0.705    # Isotopic ratio in standing melt
+      ASSIMILANT:
+          C0:     230      # Concentration of trace element in assimilant (ppm)
+          e0:     0.720    # Isotopic ratio in assimilant
+      RECHARGE:
+          C0:     1000     # Concentration of trace element in recharge magma (ppm)
+          e0:     0.703    # Isotopic ratio in recharge magma

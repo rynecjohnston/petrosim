@@ -6,9 +6,8 @@ to screen and writing to file.
 
 import csv
 
-from petrosim.models.ecafc import equilibration as equil
 
-
+K = 273.16          # Conversion factor from ºC to K
 MAXLEN = 8
 PARAMETERS_TRACE = {'Cm': 'elem', 'em': 'isoratio'}
 
@@ -17,8 +16,22 @@ class Results:
     """
     Class to store simulation results and methods to print or write them to file
     """
-    def __init__(self):
+    def __init__(self, params):
         self.results = []
+        self.params = params
+
+    def _unnormalize_temp(self, Tnorm):
+        """
+        Unnormalize the temperature
+    
+        :param Tnorm: The normalized temperature
+        :type Tnorm: float
+    
+        :return: The self._unnormalized temp
+        :rtype: float
+        """
+    
+        return self.params.Tlm * Tnorm - K
 
     def store(self, results_bulk, results_traces=None):
         """
@@ -54,7 +67,7 @@ class Results:
                 print_line.append(
                     f'{param.value_old:>{maxlen}.{param.decimals}f}')
                 if param.name_alt:
-                    value_alt = equil.unnormalize_temp(param.value_old)
+                    value_alt = self._unnormalize_temp(param.value_old)
                     print_line.append(
                         f'{value_alt:>{maxlen}.{param.decimals}f}')
             if len(row) == 2:
@@ -192,7 +205,7 @@ class Results:
                 maxlen = self._getMaxStrLength(name)
                 write_line.append(param.value_old)
                 if param.name_alt:
-                    value_alt = equil.unnormalize_temp(param.value_old)
+                    value_alt = self._unnormalize_temp(param.value_old)
                     write_line.append(value_alt)
             if len(row) == 2:
                 for j, trace in enumerate(row[1], start=1):

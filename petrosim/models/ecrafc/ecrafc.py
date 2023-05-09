@@ -1,14 +1,14 @@
 """
-This is the main simulation routine for the Energy-Constrained Assimilation
-Fractional Crystallization (EC-AFC) model based on work by Spera & Bohrson J.
-Petrol., 42, 999–1018, 2001.
+This is the main simulation routine for the Energy-Constrained Recharge,
+Assimilation, and Fractional Crystallization (EC-RAFC) model based on work by
+Spera & Bohrson G3, 3, 12, 2002.
 """
 
 import copy
 
 import numpy as np
 
-from petrosim.models.ecafc import equilibration as equil
+from petrosim.models.ecrafc import equilibration as equil
 from petrosim.results import results
 
 
@@ -86,10 +86,10 @@ class Parameter:
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC model.
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC model.
         :type params_eq: `equilibration.EquilibrationParams`
 
         :param params_sim: The parameters for the current simulation
@@ -110,10 +110,10 @@ class Parameter:
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -168,6 +168,51 @@ class Parameter:
         self.str = f'{self.value_old:11.{self.decimals}f}'
 
 
+class Parameter_Mr(Parameter):
+    """
+    The specific class to calculate the magma body mass.
+    """
+    def __init__(self, name, value_old, decimals=3, name_alt=None):
+        """
+        :param value_old: Initial value for this iteration
+        :type value_old: float
+
+        :param decimals: Number of decimals to print in the output string
+        :type decimals: int
+        """
+
+        super().__init__(name, value_old, decimals, name_alt)
+
+    def slopeFunc(self, slope_iter, x, params_init, params_eq, params_sim):
+        """
+        Calculate the slope at point x using a particular function.
+
+        :param slope_iter: The slope iteration
+        :type slope_iter: int
+
+        :param x: The x value for where the new slope is to be calculated
+        :type x: float
+
+        :param params_init: The initial values to parameterize the EC-RAFC model.
+        :type params_init: `settings.Initialization`
+
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
+        model.
+        :type params_eq: `equilibration.EquilibrationParams`
+
+        :param params_sim: The parameters for the current simulation
+        :type params_sim: dict[str: `Parameter`]
+
+        :return: the magma body mass
+        :rtype: float
+        """
+
+        kwargs = {
+            'T': x
+        }
+        return equil.variation_recharge_mass_dMr_dTm(**kwargs)
+
+
 class Parameter_Tm(Parameter):
     """
     The specific class to calculate the standing melt temperature.
@@ -193,10 +238,10 @@ class Parameter_Tm(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -236,10 +281,10 @@ class Parameter_Ta(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -253,7 +298,10 @@ class Parameter_Ta(Parameter):
         kwargs = {
             'Tm': x,
             'Ta': self.thisStepValue(slope_iter),
-            'Ma0': params_eq.Ma0
+            'Ma0': params_eq.Ma0,
+            'Mr': params_sim['Mr'].thisStepValue(slope_iter),
+            'dMr_dTm': params_sim['Mr'].dy_dx,
+            
         }
         return equil.conserv_energy_dTa_dTm(**kwargs)
 
@@ -283,10 +331,10 @@ class Parameter_Mm(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -300,7 +348,9 @@ class Parameter_Mm(Parameter):
         kwargs = {
             'Tm': x,
             'Ta': params_sim['Ta'].thisStepValue(slope_iter),
-            'Ma0': params_eq.Ma0
+            'Ma0': params_eq.Ma0,
+            'Mr': params_sim['Mr'].thisStepValue(slope_iter),
+            'dMr_dTm': params_sim['Mr'].dy_dx,
         }
         return equil.conserv_mass_dMm_dTm(**kwargs)
 
@@ -331,10 +381,10 @@ class Parameter_dm(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -351,6 +401,7 @@ class Parameter_dm(Parameter):
             'Ma0': params_eq.Ma0,
             'Mm': params_sim['Mm'].thisStepValue(slope_iter),
             'dTa_dTm': params_sim['Ta'].dy_dx,
+            'dMr_dTm': params_sim['Mr'].dy_dx,
             'dm': self.thisStepValue(slope_iter),
         }
         return equil.oxygen_isotope_comp_ddm_dTm(**kwargs)
@@ -382,10 +433,10 @@ class Parameter_Cm(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -408,7 +459,10 @@ class Parameter_Cm(Parameter):
             'Cm': self.thisStepValue(slope_iter),
             'Ca0': params_init.traces[trace_iter]['Ca0'],
             'Cm0': params_init.traces[trace_iter]['Cm0'],
+            'Cr0': params_init.traces[trace_iter]['Cr0'],
             'dTa_dTm': params_sim['Ta'].dy_dx,
+            'Mr': params_sim['Mr'].thisStepValue(slope_iter),
+            'dMr_dTm': params_sim['Mr'].dy_dx,
         }
         return equil.conc_trace_elem_dCm_dTm(**kwargs)
 
@@ -440,10 +494,10 @@ class Parameter_em(Parameter):
         :param x: The x value for where the new slope is to be calculated
         :type x: float
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `settings.Initialization`
 
-        :param params_eq: The equilibrated values to parameterize the EC-AFC
+        :param params_eq: The equilibrated values to parameterize the EC-RAFC
         model.
         :type params_eq: `equilibration.EquilibrationParams`
 
@@ -466,32 +520,39 @@ class Parameter_em(Parameter):
             'Cm': param_trace['Cm'].thisStepValue(slope_iter),
             'Ca0': params_init.traces[trace_iter]['Ca0'],
             'Cm0': params_init.traces[trace_iter]['Cm0'],
+            'Cr0': params_init.traces[trace_iter]['Cr0'],
             'dTa_dTm': params_sim['Ta'].dy_dx,
+            'dMr_dTm': params_sim['Mr'].dy_dx,
             'ea0': params_init.traces[trace_iter]['ea0'],
+            'er0': params_init.traces[trace_iter]['er0'],
             'em': self.thisStepValue(slope_iter),
         }
         return equil.isotop_ratio_dem_dTm(**kwargs)
 
 
-class ECAFC:
+class ECRAFC:
     """
-    This is the main EC-AFC simulation routine. The important calculated
+    This is the main EC-RAFC simulation routine. The important calculated
     quantities in `self.params` are updated each iteration of the simulation and
     stored by corresponding keys in `self.results`.
     """
     def __init__(self, params_init):
         """
-        The EC-AFC simulation is initialized by passing the initialized
+        The EC-RAFC simulation is initialized by passing the initialized
         parameters object. Then equilibrate the quantities for starting values
         at the requested normalized equilibration temperature (Teq_norm).
 
-        :param params_init: The initial values to parameterize the EC-AFC model.
+        :param params_init: The initial values to parameterize the EC-RAFC model.
         :type params_init: `Initialization`
         """
 
         self.params_init = params_init
         self.params_eq = equil.EquilibrationParams(self.params_init.Teq_norm)
         self.params_sim = {
+            'Mr':
+            Parameter_Mr('Mr',
+                         0.0,
+                         decimals=3),
             'Tm':
             Parameter_Tm('Tm,norm',
                          params_init.Tm0_norm,
@@ -522,7 +583,7 @@ class ECAFC:
     def simulate(self):
         """
         Solve the system of nonlinear equations for assimilation and fractional
-        crystalization using 4th-order Runge-Kutta (RK4) for each normalized
+        crystallization using 4th-order Runge-Kutta (RK4) for each normalized
         temperature step in the requested temperature range as the melting temp
         (Tnorm1) cools to the equilibration temperature (Tnorm0).
 
@@ -570,6 +631,7 @@ class ECAFC:
                     param_trace = trace[name]
                     param_trace.calcNewValue()
                     param_trace.updateValue()
+            #exit()
 
 
 """
@@ -579,13 +641,13 @@ if __name__ == '__main__':
     import dataclasses
     import os
 
-    from petrosim.models.ecafc import loader as ldr
+    from petrosim.models.ecrafc import loader as ldr
 
 
     ldr.init(os.path.join(os.path.dirname(ldr.__file__), 'example.in'))
     params_init = ldr.Parameters(**dataclasses.asdict(ldr.params))
 
-    ecafc = ECAFC(params_init)
-    ecafc.simulate()
-    ecafc.results.print()
-    #ecafc.results.write('out.csv')
+    ecrafc = ECRAFC(params_init)
+    ecrafc.simulate()
+    ecrafc.results.print(lines_shown=5)
+    #ecrafc.results.write('out.csv')
